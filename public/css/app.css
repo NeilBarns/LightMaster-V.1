@@ -748,3 +748,12 @@ a {
     visibility: visible;
     opacity: 1;
 }
+
+.description.disabled {
+    opacity: 0.5;
+    pointer-events: none; 
+}
+
+.description.disabled p {
+    color: gray; 
+}

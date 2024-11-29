@@ -87,8 +87,7 @@ $increments = $device->increments;
         </a>
 
         <div class="ui divider"></div>
-        <div class="description">
-
+        <div class="description" data-device-id="{{ $device->DeviceID }}" data-is-online="{{ $device->IsOnline ? 'true' : 'false' }}">
             @if ($isRunning || $isPaused)
                 <p id="lblStartTime-{{ $device->DeviceID }}" class="text-sm">Start time: {{ $startTime ?
                     convertTo12HourFormat(\Carbon\Carbon::parse($startTime)->format('H:i:s')) :'N/A' }}
