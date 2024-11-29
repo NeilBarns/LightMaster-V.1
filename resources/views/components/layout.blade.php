@@ -118,8 +118,7 @@
             });
 
             const channel = pusher.subscribe('devices');
-
-            // Listen for the 'device.updated' event
+           
             channel.bind('device.updated', function (data) {
                 updateDeviceCard(data.device);
             });
@@ -133,9 +132,9 @@
                     const timerElement = deviceCard.querySelector('.remaining-time');
                     const bareTimerElement = deviceCard.querySelector('.bare-remaining-time');
                     
-                    const remainingTime = device.RemainingTime; // From API response
+                    const remainingTime = device.RemainingTime; 
 
-                    // Update timer display
+                  
                     if (timerElement && bareTimerElement) {
                         const hours = Math.floor(remainingTime / 3600);
                         const minutes = Math.floor((remainingTime % 3600) / 60);
@@ -145,17 +144,38 @@
                         bareTimerElement.textContent = `${remainingTime}`;
                     }
 
-                    // Optionally update other elements like rates, status, etc.
+                    
                     const lblTotalRate = document.getElementById(`lblTotalRate-${device.DeviceID}`);
                     if (lblTotalRate) {
                         lblTotalRate.textContent = `Total charge/rate: PHP ${device.TotalRate}.00`;
                     }
+
+                    const isOnline = device.IsOnline; 
+                    toggleDescriptionState(deviceCard, isOnline);
+
                 } else {
                     // Optionally append a new card if it doesn't exist
                     console.log(`Device card for DeviceID ${device.DeviceID} not found.`);
                 }
             }
         });
+
+        
+        function toggleDescriptionState(description, enable) {
+            const elements = description.querySelectorAll('input, button, textarea, select');
+            console.log(elements);
+            // Enable or disable interactive elements
+            elements.forEach(element => {
+                element.disabled = !enable;
+            });
+
+            // Add or remove a disabled class for styling
+            if (!enable) {
+                description.classList.add('disabled');
+            } else {
+                description.classList.remove('disabled');
+            }
+        }
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {

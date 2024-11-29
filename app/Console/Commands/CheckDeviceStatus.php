@@ -28,26 +28,27 @@ class CheckDeviceStatus extends Command
      * @return int
      */
     
-    public function handle()
-    {
-        $timeout = now()->subMinutes(5);
-
-        // Devices going offline
-        $offlineDevices = Device::where('last_heartbeat', '<', $timeout)->where('IsOnline', 1)->get();
-        foreach ($offlineDevices as $device) {
-            $device->update(['IsOnline' => 0]);
-            event(new DeviceUpdated($device)); // Fire event for offline devices
-        }
-
-        // Devices coming online
-        $onlineDevices = Device::where('last_heartbeat', '>=', $timeout)->where('IsOnline', 0)->get();
-        foreach ($onlineDevices as $device) {
-            $device->update(['IsOnline' => 1]);
-            event(new DeviceUpdated($device)); // Fire event for online devices
-        }
-
-        $this->info('Device status has been checked and updated.');
-        return 0;
-    }
+     public function handle()
+     {
+         $timeout = now()->subMinutes(5);
+         
+         $offlineDevices = Device::where('last_heartbeat', '<', $timeout)->where('IsOnline', 1)->get();
+         $this->info($offlineDevices);
+         foreach ($offlineDevices as $device) {
+             $device->update(['IsOnline' => 0]);
+             event(new DeviceUpdated($device)); 
+             $this->info("Event dispatched for offline device ID: {$device->DeviceID}");
+         }
+     
+         $onlineDevices = Device::where('last_heartbeat', '>=', $timeout)->where('IsOnline', 0)->get();
+         foreach ($onlineDevices as $device) {
+             $device->update(['IsOnline' => 1]);
+             event(new DeviceUpdated($device)); 
+             $this->info("Event dispatched for online device ID: {$device->DeviceID}");
+         }
+     
+         $this->info('Device status has been checked and updated.');
+         return 0;
+     }
 
 }
